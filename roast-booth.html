@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Roast Booth</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&family=Permanent+Marker&display=swap');
+
+:root{
+  --void:#16110D;
+  --spotlight:#FFB627;
+  --ember:#FF4433;
+  --smoke:#6B5B73;
+  --bulb:#FFF4D6;
+  --paper:#F2E9DC;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+body{
+  background:
+    radial-gradient(ellipse 900px 500px at 50% 0%, rgba(255,182,39,0.10), transparent 65%),
+    var(--void);
+  color:var(--bulb);
+  font-family:'Space Grotesk', sans-serif;
+  min-height:100vh;
+  padding:40px 20px 80px;
+  overflow-x:hidden;
+}
+
+/* Marquee */
+.marquee{
+  text-align:center;
+  margin-bottom:8px;
+}
+.marquee h1{
+  font-family:'Anton', sans-serif;
+  font-size:clamp(38px, 8vw, 74px);
+  letter-spacing:4px;
+  color:var(--bulb);
+  text-shadow:
+    0 0 6px rgba(255,244,214,0.6),
+    0 0 22px rgba(255,182,39,0.35);
+  display:inline-block;
+  position:relative;
+  padding:0 10px;
+}
+.marquee h1::before, .marquee h1::after{
+  content:'';
+  position:absolute;
+  top:-14px; left:0; right:0;
+  height:8px;
+  background-image:radial-gradient(circle, var(--bulb) 2.5px, transparent 3px);
+  background-size:22px 8px;
+  background-repeat:repeat-x;
+  animation:bulbs 1.6s infinite steps(2);
+}
+.marquee h1::after{ top:auto; bottom:-14px; animation-delay:0.3s; }
+@keyframes bulbs{
+  0%{opacity:1;}
+  50%{opacity:0.35;}
+  100%{opacity:1;}
+}
+.tagline{
+  font-size:13px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--smoke);
+  margin-top:22px;
+}
+
+/* Stage */
+.stage{
+  max-width:640px;
+  margin:56px auto 0;
+  position:relative;
+}
+.spotlight{
+  position:absolute;
+  top:-140px; left:50%;
+  transform:translateX(-50%);
+  width:900px; height:500px;
+  background:radial-gradient(ellipse at top, rgba(255,182,39,0.16), transparent 60%);
+  pointer-events:none;
+  z-index:0;
+}
+
+.booth{
+  position:relative;
+  z-index:1;
+  background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.15));
+  border:1px solid rgba(255,182,39,0.25);
+  border-radius:4px;
+  padding:32px;
+}
+
+label{
+  display:block;
+  font-size:12px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--spotlight);
+  margin-bottom:10px;
+}
+
+textarea{
+  width:100%;
+  background:rgba(0,0,0,0.35);
+  border:1px solid rgba(255,244,214,0.2);
+  border-radius:2px;
+  color:var(--bulb);
+  font-family:'Space Grotesk', sans-serif;
+  font-size:15px;
+  padding:14px;
+  resize:vertical;
+  min-height:76px;
+  outline:none;
+  transition:border-color 0.2s;
+}
+textarea:focus{ border-color:var(--spotlight); }
+textarea::placeholder{ color:rgba(255,244,214,0.35); }
+
+.row{
+  display:flex;
+  gap:20px;
+  margin-top:22px;
+  flex-wrap:wrap;
+}
+.field{ flex:1; min-width:200px; }
+
+.pills{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.pill{
+  padding:8px 14px;
+  border-radius:20px;
+  border:1px solid rgba(255,244,214,0.25);
+  background:transparent;
+  color:var(--bulb);
+  font-family:'Space Grotesk', sans-serif;
+  font-size:13px;
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.pill:hover{ border-color:var(--spotlight); }
+.pill.active{
+  background:var(--spotlight);
+  border-color:var(--spotlight);
+  color:var(--void);
+  font-weight:700;
+}
+
+.go-btn{
+  margin-top:26px;
+  width:100%;
+  padding:16px;
+  background:var(--ember);
+  color:var(--bulb);
+  border:none;
+  border-radius:2px;
+  font-family:'Anton', sans-serif;
+  font-size:20px;
+  letter-spacing:2px;
+  cursor:pointer;
+  transition:transform 0.1s, background 0.2s;
+  text-transform:uppercase;
+}
+.go-btn:hover:not(:disabled){ background:#ff5c40; transform:translateY(-1px); }
+.go-btn:active:not(:disabled){ transform:translateY(1px); }
+.go-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+
+/* Output card */
+.card-wrap{
+  max-width:640px;
+  margin:36px auto 0;
+  min-height:20px;
+}
+.roast-card{
+  background:var(--paper);
+  color:#241b12;
+  border-radius:3px;
+  padding:30px 28px;
+  position:relative;
+  box-shadow:0 20px 40px rgba(0,0,0,0.4);
+  animation:drop 0.45s cubic-bezier(.2,.9,.25,1.2);
+  transform-origin:top center;
+}
+@keyframes drop{
+  0%{ opacity:0; transform:translateY(-24px) rotate(-1.5deg); }
+  100%{ opacity:1; transform:translateY(0) rotate(-0.4deg); }
+}
+.roast-card .label{
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--ember);
+  font-weight:700;
+  margin-bottom:12px;
+}
+.roast-text{
+  font-family:'Permanent Marker', cursive;
+  font-size:22px;
+  line-height:1.5;
+  color:#241b12;
+}
+.card-actions{
+  margin-top:20px;
+  display:flex;
+  gap:10px;
+}
+.mini-btn{
+  padding:8px 16px;
+  background:transparent;
+  border:1px solid rgba(36,27,18,0.3);
+  border-radius:20px;
+  font-family:'Space Grotesk', sans-serif;
+  font-size:12px;
+  cursor:pointer;
+  color:#241b12;
+}
+.mini-btn:hover{ border-color:#241b12; }
+
+.loading{
+  text-align:center;
+  color:var(--spotlight);
+  font-size:13px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  padding:20px;
+  opacity:0.8;
+}
+.dots span{
+  animation:blink 1.2s infinite;
+}
+.dots span:nth-child(2){ animation-delay:0.2s; }
+.dots span:nth-child(3){ animation-delay:0.4s; }
+@keyframes blink{ 0%,100%{opacity:0.2;} 50%{opacity:1;} }
+
+.err{
+  color:var(--ember);
+  font-size:13px;
+  text-align:center;
+  padding:14px;
+}
+
+/* Reel of past roasts */
+.reel{
+  max-width:640px;
+  margin:44px auto 0;
+}
+.reel-title{
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--smoke);
+  margin-bottom:12px;
+}
+.reel-item{
+  border-left:2px solid rgba(255,182,39,0.3);
+  padding:8px 14px;
+  margin-bottom:10px;
+  font-size:14px;
+  color:rgba(255,244,214,0.65);
+  font-style:italic;
+}
+
+.footnote{
+  max-width:640px;
+  margin:40px auto 0;
+  font-size:11px;
+  color:var(--smoke);
+  text-align:center;
+  line-height:1.6;
+}
+</style>
+</head>
+<body>
+
+<div class="marquee">
+  <h1>ROAST BOOTH</h1>
+  <div class="tagline">step up · take a hit · laugh it off</div>
+</div>
+
+<div class="stage">
+  <div class="spotlight"></div>
+  <div class="booth">
+    <div class="field">
+      <label>Who or what's getting roasted?</label>
+      <textarea id="topic" placeholder="e.g. my friend Dev who takes 40 min to order coffee, or 'my Monday mornings', or 'my own cooking skills'"></textarea>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Heat level</label>
+        <div class="pills" id="style-pills">
+          <button class="pill active" data-style="Playful & light">Playful</button>
+          <button class="pill" data-style="Savage but funny">Savage</button>
+          <button class="pill" data-style="Sarcastic one-liners">Sarcastic</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="go-btn" id="go-btn">🔥 Light the Mic</button>
+  </div>
+</div>
+
+<div class="card-wrap" id="card-wrap"></div>
+
+<div class="reel" id="reel" style="display:none;">
+  <div class="reel-title">Greatest Hits</div>
+  <div id="reel-list"></div>
+</div>
+
+<div class="footnote">
+  For laughs among friends, coworkers, or yourself — not written about named public figures,<br>
+  and it steers clear of anything genuinely cruel. All in good fun.
+</div>
+
+<script>
+let currentStyle = "Playful & light";
+const pills = document.querySelectorAll('.pill');
+pills.forEach(p => {
+  p.addEventListener('click', () => {
+    pills.forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    currentStyle = p.dataset.style;
+  });
+});
+
+const goBtn = document.getElementById('go-btn');
+const cardWrap = document.getElementById('card-wrap');
+const reel = document.getElementById('reel');
+const reelList = document.getElementById('reel-list');
+const history = [];
+
+async function roast(){
+  const topic = document.getElementById('topic').value.trim();
+  if(!topic){
+    cardWrap.innerHTML = '<div class="err">Give the mic something to work with first.</div>';
+    return;
+  }
+
+  goBtn.disabled = true;
+  cardWrap.innerHTML = `<div class="loading">warming up the mic<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+
+  const systemPrompt = `You are the house comedian at a friendly roast booth. Write ONE short roast (2-4 sentences, punchy, clever) about whatever the user describes, in a "${currentStyle}" style.
+
+Hard rules, no exceptions:
+- Never mention or imply anything about race, ethnicity, religion, disability, sexual orientation, gender identity, immigration status, or body weight/appearance.
+- Never write about real, named public figures (celebrities, politicians, etc.) — if the input names one, gently roast the IDEA or SITUATION they mention instead, not the real person.
+- Keep it clever and specific to what they described, not generic insults.
+- No slurs, no genuinely cruel content, nothing that reads as bullying rather than banter.
+- Output ONLY the roast text, no preamble, no quotation marks, no labels.`;
+
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 300,
+        system: systemPrompt,
+        messages: [
+          { role: "user", content: `Roast this: ${topic}` }
+        ]
+      })
+    });
+
+    const data = await response.json();
+    const textBlock = (data.content || []).find(b => b.type === "text");
+    const roastText = textBlock ? textBlock.text.trim() : "The mic's dead. Try again.";
+
+    renderCard(roastText);
+    history.unshift({ topic, text: roastText });
+    renderReel();
+
+  }catch(err){
+    cardWrap.innerHTML = `<div class="err">Mic dropped mid-set. Something went wrong — try again.</div>`;
+    console.error(err);
+  }finally{
+    goBtn.disabled = false;
+  }
+}
+
+function renderCard(text){
+  cardWrap.innerHTML = `
+    <div class="roast-card">
+      <div class="label">🎤 On the record</div>
+      <div class="roast-text">${escapeHtml(text)}</div>
+      <div class="card-actions">
+        <button class="mini-btn" onclick="roast()">Roast again</button>
+        <button class="mini-btn" onclick="copyRoast(this)">Copy</button>
+      </div>
+    </div>
+  `;
+}
+
+function copyRoast(btn){
+  const text = btn.closest('.roast-card').querySelector('.roast-text').innerText;
+  navigator.clipboard.writeText(text);
+  btn.innerText = "Copied!";
+  setTimeout(()=> btn.innerText = "Copy", 1200);
+}
+
+function renderReel(){
+  if(history.length <= 1) return;
+  reel.style.display = 'block';
+  reelList.innerHTML = history.slice(1, 6).map(h =>
+    `<div class="reel-item">"${escapeHtml(h.text)}"</div>`
+  ).join('');
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.innerText = str;
+  return div.innerHTML;
+}
+
+goBtn.addEventListener('click', roast);
+document.getElementById('topic').addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' && e.metaKey) roast();
+});
+</script>
+
+</body>
+</html>
